@@ -1,35 +1,29 @@
-"use client"
-import * as React from "react"
+"use client";
+import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
+  Activity,
+  Bell,
+  FileText,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+  MessageSquare,
+  User,
+} from "lucide-react";
 
-import { NavMain } from "@/components/NavMain"
-import { NavProjects } from "@/components/NavProjects"
-import { NavUser } from "@/components/NavUser"
-import { TeamSwitcher } from "@/components/TeamSwitcher"
+import { SidebarNav,  } from "@/components/SidebarNav";
+import { NavUser } from "@/components/NavUser";
+import { TeamSwitcher } from "@/components/TeamSwitcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-// This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Mustafa",
+    email: "ms@ms.com",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
@@ -38,122 +32,35 @@ const data = {
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
     },
+  ],
+  navMenu: [
     {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
+      name: "Today's Data",
+      url: "home",
+      icon: Activity,
     },
     {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
+      name: "Set Reminders",
+      url: "reminders",
+      icon: Bell,
+    },
+    {
+      name: "Manage Health Record",
+      url: "manage-health",
+      icon: FileText,
+    },
+    {
+      name: "Profile",
+      url: "profile",
+      icon: User,
+    },
+    {
+      name: "Medify AI Chat",
+      url: "ai-chat",
+      icon: MessageSquare,
     },
   ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+};
 
 export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -162,13 +69,12 @@ export default function AppSidebar({ ...props }: React.ComponentProps<typeof Sid
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <SidebarNav menu={data.navMenu} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
