@@ -12,25 +12,27 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
-import z from "zod"
-import axios from "axios"
+import z from "zod";
+import axios from "axios";
 import { useNavigate } from "react-router";
-
+import { login } from "@/utils/api";
+import { Spinner } from "./ui/spinner";
 
 const loginSchema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid Email"),
-  password: z.string().min(6, "Password must be at least 6 characters").nonempty("Password is required"),
-})
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .nonempty("Password is required"),
+});
 
 function LoginForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
-  const mutate = useMutation({
-    mutationFn: (data) => {
-      return axios.post("/api/login", data);
-    }
-  })
+  const mutation = useMutation({
+    mutationFn: login,
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,38 +46,38 @@ function LoginForm() {
           const errorMessage = `${field}: ${message[0]}`;
           toast.error(errorMessage, {
             style: {
-              color: 'red',
-            }
-          })
+              color: "red",
+            },
+          });
         }
-      })
+      });
 
       return;
     }
 
-    mutate.mutate({ email, password });
-
-    if (mutate.isSuccess) {
-      toast.success("Logged in successfully!", {
-        style: {
-          color: 'green',
-        }
-      })
-
-      navigate("/dashboard/home");
-    }
-
-    if (mutate.isError) {
-      toast.error(`${mutate.error.message}`, {
-        style: {
-          color: 'red',
-        }
-      })
-    }
+    mutation.mutate({ email, password });
 
     console.log("Form submitted", { email, password });
+  };
+
+  if (mutation.isSuccess) {
+    toast.success("Logged in successfully!", {
+      style: {
+        color: "green",
+      },
+    });
+
+    navigate("/dashboard/home");
   }
 
+  if (mutation.isError) {
+    toast.error(`${mutation.error.message}`, {
+      style: {
+        color: "red",
+      },
+    });
+    console.log("Error: ", mutation.error);
+  }
 
   return (
     <div className={"flex flex-col gap-6"}>
@@ -97,7 +99,7 @@ function LoginForm() {
                   placeholder="m@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  // required
+                  required
                 />
               </Field>
               <Field>
@@ -118,7 +120,16 @@ function LoginForm() {
                 />
               </Field>
               <Field>
-                <Button type="submit">{mutate.isPending ? "Logging in..." : "Login"}</Button>
+                <Button type="submit" disabled={mutation.isPending}>
+                  {mutation.isPending ? (
+                    <>
+                      <Spinner />
+                      <span>Logging in...</span>
+                    </>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
 
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link to={"/auth/signup"}>Sign up</Link>
