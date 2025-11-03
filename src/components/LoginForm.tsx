@@ -1,21 +1,82 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Link } from "react-router"
+} from "@/components/ui/card";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { Link } from "react-router";
+import { toast } from "sonner";
+import z from "zod"
+import axios from "axios"
+import { useNavigate } from "react-router";
+
+
+const loginSchema = z.object({
+  email: z.string().nonempty("Email is required").email("Invalid Email"),
+  password: z.string().min(6, "Password must be at least 6 characters").nonempty("Password is required"),
+})
 
 function LoginForm() {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const navigate = useNavigate();
+  const mutate = useMutation({
+    mutationFn: (data) => {
+      return axios.post("/api/login", data);
+    }
+  })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const result = loginSchema.safeDecode({ email, password });
+    console.log(result);
+    if (!result.success) {
+      const errors = z.flattenError(result.error);
+
+      Object.entries(errors.fieldErrors).forEach(([field, message]) => {
+        if (field && message.length > 0) {
+          const errorMessage = `${field}: ${message[0]}`;
+          toast.error(errorMessage, {
+            style: {
+              color: 'red',
+            }
+          })
+        }
+      })
+
+      return;
+    }
+
+    mutate.mutate({ email, password });
+
+    if (mutate.isSuccess) {
+      toast.success("Logged in successfully!", {
+        style: {
+          color: 'green',
+        }
+      })
+
+      navigate("/dashboard/home");
+    }
+
+    if (mutate.isError) {
+      toast.error(`${mutate.error.message}`, {
+        style: {
+          color: 'red',
+        }
+      })
+    }
+
+    console.log("Form submitted", { email, password });
+  }
+
+
   return (
     <div className={"flex flex-col gap-6"}>
       <Card>
@@ -26,15 +87,17 @@ function LoginForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
-                  type="email"
+                  type="text"
                   placeholder="m@example.com"
-                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  // required
                 />
               </Field>
               <Field>
@@ -42,18 +105,23 @@ function LoginForm() {
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <Link
                     to="/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
                     Forgot your password?
                   </Link>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
-                
+                <Button type="submit">{mutate.isPending ? "Logging in..." : "Login"}</Button>
+
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link to={"/signup"}>Sign up</Link>
+                  Don&apos;t have an account? <Link to={"/auth/signup"}>Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -61,9 +129,7 @@ function LoginForm() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
-
 
 export default LoginForm;

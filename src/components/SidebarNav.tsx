@@ -25,7 +25,7 @@ export function SidebarNav({
       <SidebarMenu>
         {menu.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild className="h-12" tooltip={item.name}>
+            <SidebarMenuButton asChild className="h-10" tooltip={item.name}>
               <Link to={item.url}>
                 <item.icon />
                 <span>{item.name}</span>

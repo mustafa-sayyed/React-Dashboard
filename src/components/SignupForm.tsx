@@ -39,7 +39,7 @@ function SignupForm() {
                 <Button type="submit">Login</Button>
 
                 <FieldDescription className="text-center">
-                  Already have an account? <Link to={"/login"}>Login</Link>
+                  Already have an account? <Link to={"/auth/login"}>Login</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
