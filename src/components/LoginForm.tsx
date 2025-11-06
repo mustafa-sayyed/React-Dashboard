@@ -17,6 +17,7 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import { login } from "@/utils/api";
 import { Spinner } from "./ui/spinner";
+import { useTokenStore } from "@/store";
 
 const loginSchema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid Email"),
@@ -30,8 +31,17 @@ function LoginForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
+  const setToken = useTokenStore((state) => state.setToken)
   const mutation = useMutation({
     mutationFn: login,
+    onError(error, variables, onMutateResult, context) {
+      toast.error(`${error.response?.data?.message || error.message}`, {
+        style: {
+          color: "red",
+        },
+      });
+      console.log("Error: ", error);
+    },
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -67,16 +77,10 @@ function LoginForm() {
       },
     });
 
-    navigate("/dashboard/home");
-  }
+    const token = mutation.data.data.accessToken;
+    setToken(token);
 
-  if (mutation.isError) {
-    toast.error(`${mutation.error.message}`, {
-      style: {
-        color: "red",
-      },
-    });
-    console.log("Error: ", mutation.error);
+    navigate("/dashboard/home");
   }
 
   return (
