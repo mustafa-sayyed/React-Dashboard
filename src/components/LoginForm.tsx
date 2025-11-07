@@ -17,7 +17,7 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import { login } from "@/utils/api";
 import { Spinner } from "./ui/spinner";
-import { useTokenStore } from "@/store";
+import { useAuthStore, useTokenStore } from "@/store";
 
 const loginSchema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid Email"),
@@ -31,10 +31,11 @@ function LoginForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
-  const setToken = useTokenStore((state) => state.setToken)
+  const setToken = useTokenStore((state) => state.setToken);
+  const loginUser = useAuthStore((state) => state.loginUser);
   const mutation = useMutation({
     mutationFn: login,
-    onError(error, variables, onMutateResult, context) {
+    onError(error) {
       toast.error(`${error.response?.data?.message || error.message}`, {
         style: {
           color: "red",
@@ -42,12 +43,26 @@ function LoginForm() {
       });
       console.log("Error: ", error);
     },
+    onSuccess(response) {
+      toast.success("Logged in successfully!", {
+        style: {
+          color: "green",
+        },
+      });
+
+      const token = response.data.accessToken;
+      setToken(token);
+
+      const { name, email, _id } = response.data.user;
+      loginUser(name, email, _id);
+
+      navigate("/dashboard/home");
+    },
   });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = loginSchema.safeDecode({ email, password });
-    console.log(result);
     if (!result.success) {
       const errors = z.flattenError(result.error);
 
@@ -66,22 +81,7 @@ function LoginForm() {
     }
 
     mutation.mutate({ email, password });
-
-    console.log("Form submitted", { email, password });
   };
-
-  if (mutation.isSuccess) {
-    toast.success("Logged in successfully!", {
-      style: {
-        color: "green",
-      },
-    });
-
-    const token = mutation.data.data.accessToken;
-    setToken(token);
-
-    navigate("/dashboard/home");
-  }
 
   return (
     <div className={"flex flex-col gap-6"}>

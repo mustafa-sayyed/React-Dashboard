@@ -2,18 +2,30 @@ import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 
 interface User {
+  _id: string;
   name: string;
   email: string;
-  loginUser: (name: string, email: string) => void;
+  authStatus: boolean;
+  loginUser: (name: string, email: string, _id: string) => void;
   logoutUser: () => void;
 }
 
-const useUserStore = create<User>((set) => ({
-  name: "",
-  email: "",
-  loginUser: (name: string, email: string) => set({ name, email }),
-  logoutUser: () => set({ name: "", email: "" }),
-}));
+const useAuthStore = create<User>()(
+  devtools(
+    persist(
+      (set) => ({
+        _id: "",
+        name: "",
+        email: "",
+        authStatus: false,
+        loginUser: (name: string, email: string, _id: string) =>
+          set({ name, email, _id, authStatus: true }),
+        logoutUser: () => set({ name: "", email: "", _id: "", authStatus: false }),
+      }),
+      { name: "auth-store" }
+    )
+  )
+);
 
 interface TokenStore {
   token: string;
@@ -34,4 +46,4 @@ const useTokenStore = create<TokenStore>()(
   )
 );
 
-export { useUserStore, useTokenStore };
+export { useAuthStore, useTokenStore };

@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,8 +10,16 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useAuthStore, useTokenStore } from "@/store";
 
 function DashboardLayout() {
+  const token = useTokenStore((state) => state.token);
+  const authStatus = useAuthStore((state) => state.authStatus);
+
+  if (!authStatus || !token) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />

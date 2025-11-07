@@ -15,15 +15,13 @@ import AuthLayout from "./Layout/AuthLayout";
 const router = createBrowserRouter([
   {
     path: "/dashboard",
-    element: (
-      <>
-        <DashboardLayout />
-        <Navigate to={"home"} />
-      </>
-    ),
+    element: <DashboardLayout />,
     children: [
       {
         index: true,
+        element: <Navigate to="home" replace />,
+      },
+      {
         path: "home",
         element: <Home />,
       },
