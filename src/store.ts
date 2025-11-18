@@ -46,4 +46,20 @@ const useTokenStore = create<TokenStore>()(
   )
 );
 
-export { useAuthStore, useTokenStore };
+type ThemeOptions = "light" | "dark";
+interface Theme {
+  theme: ThemeOptions;
+  setTheme: (theme: ThemeOptions) => void;
+}
+
+const useThemeStore = create<Theme>()(
+  persist(
+    (set) => ({
+      theme: "light",
+      setTheme: (theme) => set({ theme }),
+    }),
+    { name: "theme-store" }
+  )
+);
+
+export { useAuthStore, useTokenStore, useThemeStore };

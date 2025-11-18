@@ -3,8 +3,11 @@ import * as React from "react";
 import {
   Activity,
   Bell,
+  BookOpen,
+  BookPlus,
   FileText,
   GalleryVerticalEnd,
+  Library,
   MessageSquare,
   User,
 } from "lucide-react";
@@ -35,29 +38,24 @@ const data = {
   ],
   navMenu: [
     {
-      name: "Today's Data",
+      name: "All Books",
       url: "home",
-      icon: Activity,
+      icon: BookOpen,
     },
     {
-      name: "Set Reminders",
-      url: "reminders",
-      icon: Bell,
+      name: "My Books",
+      url: "my-books",
+      icon: Library,
     },
     {
-      name: "Manage Health Record",
-      url: "manage-health",
-      icon: FileText,
+      name: "Add Books",
+      url: "add-books",
+      icon: BookPlus,
     },
     {
       name: "Profile",
       url: "profile",
       icon: User,
-    },
-    {
-      name: "Medify AI Chat",
-      url: "ai-chat",
-      icon: MessageSquare,
     },
   ],
 };

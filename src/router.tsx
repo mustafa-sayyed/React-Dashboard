@@ -1,12 +1,11 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import {
-  AIChat,
   Home,
   Login,
-  ManageHealth,
+  MyBooks,
   NotFound,
   Profile,
-  Reminders,
+  AddBooks,
   Signup,
 } from "./pages";
 import DashboardLayout from "./Layout/DashboardLayout";
@@ -26,20 +25,16 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "reminders",
-        element: <Reminders />,
+        path: "add-books",
+        element: <AddBooks />,
       },
       {
-        path: "manage-health",
-        element: <ManageHealth />,
+        path: "my-books",
+        element: <MyBooks />,
       },
       {
         path: "profile",
         element: <Profile />,
-      },
-      {
-        path: "ai-chat",
-        element: <AIChat />,
       },
     ],
   },

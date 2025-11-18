@@ -1,19 +1,17 @@
-import AIChat from "./AiChat";
 import Home from "./Home";
 import Login from "./Login";
-import ManageHealth from "./ManageHealth";
+import AddBooks from "./AddBooks";
 import NotFound from "./NotFound";
 import Profile from "./Profile";
-import Reminders from "./Reminders";
+import MyBooks from "./MyBooks";
 import Signup from "./Signup";
 
 export {
     Home,
     Login,
     Signup,
-    AIChat,
-    ManageHealth,
+    AddBooks,
     Profile,
-    Reminders,
+    MyBooks,
     NotFound,
 }
